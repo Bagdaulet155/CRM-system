@@ -1,4 +1,3 @@
-<!-- crm/templates/crm/client_list.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +7,26 @@
 </head>
 <body>
     <h1>Список клиентов</h1>
-    <ul>
-        {% for client in clients %}
-            <li>{{ client.name }} - {{ client.email }}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Адрес</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>{{ client.name }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.phone }}</td>
+                <td>{{ client.address }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'create_deal' %}">Создать сделку</a>
 </body>
 </html>

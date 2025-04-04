@@ -1,10 +1,17 @@
-<!-- templates/home.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Главная страница</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Home</title>
 </head>
 <body>
-    <h1>Добро пожаловать на главную страницу!</h1>
+    <h1>Добро пожаловать в CRM-систему</h1>
+    <nav>
+        <a href="{% url 'client_list' %}">Список клиентов</a> |
+        <a href="{% url 'deal_list' %}">Список сделок</a> |
+        <a href="{% url 'signup' %}">Регистрация</a> |
+        <a href="{% url 'login' %}">Вход</a>
+    </nav>
 </body>
 </html>

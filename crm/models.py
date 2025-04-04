@@ -30,12 +30,13 @@ class Deal(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
+    document = models.FileField(upload_to='documents/', null=True, blank=True)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, default="Pending")
-
-    def __str__(self):
+    status = models.CharField(max_length=50, choices=[('new', 'New'), ('in_progress', 'In Progress'), ('completed', 'Completed')], default='new')
+    
+    def str(self):
         return self.title
-
 
 class Task(models.Model):
     deal = models.ForeignKey(Deal, on_delete=models.CASCADE)
