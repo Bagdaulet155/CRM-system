@@ -1,32 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список сделок</title>
-</head>
-<body>
-    <h1>Список сделок</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Описание</th>
-                <th>Сумма</th>
-                <th>Дата</th>
-                <th>Клиент</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for deal in deals %}
-            <tr>
-                <td>{{ deal.description }}</td>
-                <td>{{ deal.amount }}</td>
-                <td>{{ deal.date }}</td>
-                <td>{{ deal.client.name }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'create_deal' %}">Создать сделку</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Список сделок</h2>
+    {% if deals %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Документ</th>
+                    <th>Изображение</th>
+                    <th>Статус</th>
+                    <th>Дата создания</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deal in deals %}
+                <tr>
+                    <td>{{ deal.title }}</td>
+                    <td>{{ deal.description }}</td>
+                    <td>
+                        {% if deal.document %}
+                            <a href="{{ deal.document.url }}">Скачать</a>
+                        {% else %}
+                            Нет
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if deal.image %}
+                            <img src="{{ deal.image.url }}" alt="Изображение" width="100">
+                        {% else %}
+                            Нет
+                        {% endif %}
+                    </td>
+                    <td>{{ deal.status }}</td>
+                    <td>{{ deal.created_at|date:"d.m.Y H:i" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Сделок пока нет.</p>
+    {% endif %}
+    <a class="btn btn-primary mt-3" href="{% url 'create_deal' %}">Создать новую сделку</a>
+</div>
+{% endblock %}

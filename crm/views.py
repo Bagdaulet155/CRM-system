@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, authenticate
 from .models import Client, Deal
-from .forms import SignUpForm, DealForm
-
+from .forms import SignUpForm, DealForm, ClientForm
+from django.contrib.auth.decorators import login_required
 # Представление для регистрации пользователя
 def signup(request):
     if request.method == 'POST':

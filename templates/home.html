@@ -1,17 +1,92 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Home</title>
+    <title>CRM-система</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1f1c2c, #928dab);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #000;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .auth-buttons a {
+            color: #fff;
+            background-color: #444;
+            padding: 10px 20px;
+            margin-left: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .auth-buttons a:hover {
+            background-color: #666;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .main-buttons a {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #1f1c2c;
+            text-decoration: none;
+            padding: 15px 30px;
+            margin: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .main-buttons a:hover {
+            background-color: #ddd;
+        }
+    </style>
 </head>
 <body>
-    <h1>Добро пожаловать в CRM-систему</h1>
-    <nav>
-        <a href="{% url 'client_list' %}">Список клиентов</a> |
-        <a href="{% url 'deal_list' %}">Список сделок</a> |
-        <a href="{% url 'signup' %}">Регистрация</a> |
-        <a href="{% url 'login' %}">Вход</a>
-    </nav>
+    <header>
+        <div class="logo">CRM systems</div>
+        <div class="auth-buttons">
+            <a href="{% url 'signup' %}">Регистрация</a>
+            <a href="{% url 'login' %}">Войти</a>
+        </div>
+    </header>
+
+    <main>
+        <h1>Добро пожаловать в CRM-систему</h1>
+        <div class="main-buttons">
+            <a href="{% url 'client_list' %}">Список клиентов</a>
+            <a href="{% url 'deal_list' %}">Список сделок</a>
+            <a href="{% url 'create_deal' %}">Создать сделку</a>
+        </div>
+    </main>
 </body>
 </html>

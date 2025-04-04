@@ -1,17 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Создать сделку</title>
-</head>
-<body>
-    <h1>Создать сделку</h1>
-    <form method="POST">
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Создание сделки</h2>
+    <form method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light shadow-sm">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Создать сделку</button>
+        <button type="submit" class="btn btn-primary mt-3">Создать сделку</button>
+        <a href="{% url 'deal_list' %}" class="btn btn-secondary mt-3">Назад к списку</a>
     </form>
-    <a href="{% url 'deal_list' %}">Назад к списку сделок</a>
-</body>
-</html>
+</div>
+{% endblock %}

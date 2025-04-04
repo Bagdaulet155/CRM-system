@@ -1,32 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Список клиентов</title>
-</head>
-<body>
-    <h1>Список клиентов</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Имя</th>
-                <th>Email</th>
-                <th>Телефон</th>
-                <th>Адрес</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for client in clients %}
-            <tr>
-                <td>{{ client.name }}</td>
-                <td>{{ client.email }}</td>
-                <td>{{ client.phone }}</td>
-                <td>{{ client.address }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'create_deal' %}">Создать сделку</a>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Список клиентов</h2>
+
+
+  {% if clients %}
+    <ul>
+      {% for client in clients %}
+        <li>
+          <strong>{{ client.name }}</strong><br>
+          Email: {{ client.email }}<br>
+          Телефон: {{ client.phone }}<br>
+          <a href="{% url 'edit_client' client.id %}">✏️ Редактировать</a> |
+          <a href="{% url 'delete_client' client.id %}">🗑 Удалить</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Нет клиентов в системе.</p>
+  {% endif %}
+{% endblock %}
