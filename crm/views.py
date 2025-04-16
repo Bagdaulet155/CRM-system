@@ -12,6 +12,9 @@ from .forms import SignUpForm, DealForm, SomeForm  # Импортируем фо
 from django.views.decorators.http import require_http_methods
 from django.contrib import messages
 
+from django.contrib.auth import get_user_model  # get_user_model() импорттау
+User = get_user_model() 
+
 
 def some_view(request):
     if request.method == 'POST':
@@ -39,27 +42,28 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         
-        # reCAPTCHA валидациясы
+        # ✅ reCAPTCHA тексеру
         recaptcha_response = request.POST.get('g-recaptcha-response')
-        if settings.RECAPTCHA_SECRET_KEY:  # reCAPTCHA қосылғандығын тексеру
+        if settings.RECAPTCHA_SECRET_KEY and recaptcha_response:
             data = {
                 'secret': settings.RECAPTCHA_SECRET_KEY,
                 'response': recaptcha_response
             }
-            response = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
-            result = response.json()
-            
+            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
+            result = r.json()
             if not result.get('success'):
                 form.add_error(None, 'reCAPTCHA validation failed. Please try again.')
-                return render(request, 'registration/signup.html', {'form': form})
 
         if form.is_valid():
             user = form.save()
             login(request, user)
+            messages.success(request, "Тіркелу сәтті өтті!")
             return redirect('home')
+        else:
+            messages.error(request, "Формада қателер бар. Тексеріңіз.")
     else:
         form = SignUpForm()
-    
+
     return render(request, 'registration/signup.html', {'form': form})
 
 
@@ -77,34 +81,50 @@ def client_list(request):
 def deal_list(request):
     deals = Deal.objects.all()
     clients = Client.objects.all()
-    
-    # Фильтрация параметрлері
+
+    # Параметрлерді алу
     client_id = request.GET.get('client')
     min_amount = request.GET.get('min_amount')
     max_amount = request.GET.get('max_amount')
-    date_from = request.GET.get('date_from')
-    date_to = request.GET.get('date_to')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
     status = request.GET.get('status')
+    sort_by = request.GET.get('sort_by')
 
+    # Фильтрация
     if client_id:
         deals = deals.filter(client__id=client_id)
-    
+
     if min_amount:
         deals = deals.filter(amount__gte=float(min_amount))
-    
+
     if max_amount:
         deals = deals.filter(amount__lte=float(max_amount))
-    
+
     if status:
         deals = deals.filter(status=status)
-    
-    if date_from and date_to:
+
+    if start_date:
         try:
-            date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
-            date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
-            deals = deals.filter(created_at__range=[date_from_obj, date_to_obj])
+            deals = deals.filter(created_at__date__gte=datetime.strptime(start_date, '%Y-%m-%d').date())
         except ValueError:
             pass
+
+    if end_date:
+        try:
+            deals = deals.filter(created_at__date__lte=datetime.strptime(end_date, '%Y-%m-%d').date())
+        except ValueError:
+            pass
+
+    # Сұрыптау
+    if sort_by == "date_asc":
+        deals = deals.order_by("created_at")
+    elif sort_by == "date_desc":
+        deals = deals.order_by("-created_at")
+    elif sort_by == "amount_asc":
+        deals = deals.order_by("amount")
+    elif sort_by == "amount_desc":
+        deals = deals.order_by("-amount")
 
     return render(request, 'crm/deal_list.html', {
         'deals': deals,
@@ -113,31 +133,27 @@ def deal_list(request):
     })
 
 
-@login_required
-def create_deal(request):
-    if not request.user.has_perm('crm.add_deal'):
-        return HttpResponse("Сізде құқықтар жоқ!", status=403)
-
-    if request.method == 'POST':
-        form = DealForm(request.POST, request.FILES)
-        if form.is_valid():
-            deal = form.save(commit=False)
-            deal.created_by = request.user
-            deal.save()
-            return redirect('deal_list')
-    else:
-        form = DealForm()
-    
-    return render(request, 'crm/create_deal.html', {'form': form})
-
 
 def home(request):
     return render(request, 'home.html')
+@login_required
+def create_deal(request):
+    if not request.user.has_perm('crm.add_deal'):
+        return HttpResponse("У вас нет прав доступа!", status=403)
+
+    if request.method == 'POST':
+        form = DealForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            deal = form.save()
+            return redirect('deal_list')
+    else:
+        form = DealForm(user=request.user)
+
+    return render(request, 'crm/create_deal.html', {'form': form})
 
 
 def handler404(request, exception):
     return render(request, '404.html', status=404)
-
 
 def handler500(request):
     return render(request, '500.html', status=500)

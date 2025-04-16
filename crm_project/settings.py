@@ -25,7 +25,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crm',
+    'captcha',  # 👈 reCAPTCHA жұмыс істеуі үшін міндетті түрде керек
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -110,8 +112,14 @@ LOGOUT_REDIRECT_URL = '/login/'
 RECAPTCHA_SITE_KEY = '6LeDGA8rAAAAACIcccJm1StsNHvO0yc0jcv4MtAG'
 RECAPTCHA_SECRET_KEY = '6LeDGA8rAAAAAAD2HVNqgH3TcLMf9i4-1vwqY2Lx'
 
+RECAPTCHA_PUBLIC_KEY = 'your-public-key'
+RECAPTCHA_PRIVATE_KEY = 'your-private-key'
+
+
 # User model configuration
 AUTH_USER_MODEL = 'crm.CustomUser'
+
+
 
 # Настройки для загрузки файлов
 MEDIA_URL = '/media/'

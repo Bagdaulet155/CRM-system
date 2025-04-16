@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
@@ -6,24 +7,59 @@
         <div class="card shadow p-4 rounded-4">
             <h2 class="text-center mb-4">Регистрация</h2>
 
-            {% if form.errors %}
-            <div class="alert alert-danger">
-                {% for field in form %}
-                    {% for error in field.errors %}
+            {# Глобальные ошибки формы (напр. reCAPTCHA или user_type) #}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
-                {% endfor %}
-            </div>
+                </div>
+            {% endif %}
+
+            {# Ошибки по каждому полю #}
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endif %}
 
             <form method="post" novalidate>
                 {% csrf_token %}
-                {% for field in form %}
-                    <div class="form-group mb-3">
-                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                        {{ field }}
-                    </div>
-                {% endfor %}
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+                    {{ form.username }}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    {{ form.email }}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.user_type.id_for_label }}">Тип пользователя</label>
+                    {{ form.user_type }}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.password1.id_for_label }}">Пароль</label>
+                    {{ form.password1 }}
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="{{ form.password2.id_for_label }}">Повторите пароль</label>
+                    {{ form.password2 }}
+                </div>
+
+                {# reCAPTCHA орны (қаласаң кейін қоса аламыз) #}
+                {# {{ form.captcha }} #}
+
                 <button type="submit" class="btn btn-success w-100">Зарегистрироваться</button>
             </form>
 

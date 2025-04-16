@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth.views import LogoutView
 from crm import views  # crm қосымшасын импорттау
+print(dir(views))  # 👈 бұл views ішінде не бар екенін көрсетеді
 
 urlpatterns = [
     # Админ панелі

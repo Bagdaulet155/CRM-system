@@ -1,22 +1,22 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from .models import Deal, Client
-import os
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
+from .models import Deal, Client
 from PIL import Image
-from django.core.validators import FileExtensionValidator
+import os
 
+# CustomUser моделін алу
+User = get_user_model()
 
-
-
+# ➤ Жалпы форма мысалы
 class SomeForm(forms.Form):
     field1 = forms.CharField(max_length=100)
     field2 = forms.IntegerField()
     field3 = forms.DateField()
 
-    
+# ➤ Регистрация формасы
 class SignUpForm(UserCreationForm):
     email = forms.EmailField(
         label=_('Email'),
@@ -27,9 +27,16 @@ class SignUpForm(UserCreationForm):
         required=True
     )
 
+    user_type = forms.ChoiceField(
+        label=_('Тип пользователя'),
+        choices=User.USER_TYPE_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=True
+    )
+
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'user_type', 'password1', 'password2')
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -40,6 +47,7 @@ class SignUpForm(UserCreationForm):
             raise ValidationError(_("Этот email уже зарегистрирован"))
         return email
 
+# ➤ Сделка формасы
 class DealForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -53,28 +61,12 @@ class DealForm(forms.ModelForm):
         fields = ['client', 'title', 'description', 'amount', 'status', 'document', 'image']
         widgets = {
             'client': forms.Select(attrs={'class': 'form-control'}),
-            'title': forms.TextInput(attrs={
-                'class': 'form-control',
-                'maxlength': '100'
-            }),
-            'description': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 3
-            }),
-            'amount': forms.NumberInput(attrs={
-                'class': 'form-control',
-                'min': '0',
-                'step': '0.01'
-            }),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '100'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '0.01'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
-            'document': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
-                'accept': '.pdf,.doc,.docx,.xls,.xlsx'
-            }),
-            'image': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
-                'accept': 'image/jpeg,image/png,image/gif'
-            }),
+            'document': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': '.pdf,.doc,.docx,.xls,.xlsx'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/jpeg,image/png,image/gif'}),
         }
 
     def clean_title(self):
@@ -95,11 +87,7 @@ class DealForm(forms.ModelForm):
             ext = os.path.splitext(document.name)[1].lower()
             valid_extensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx']
             if ext not in valid_extensions:
-                raise ValidationError(_(
-                    "Неподдерживаемый формат документа. "
-                    "Допустимые форматы: %(formats)s"
-                ) % {'formats': ', '.join(valid_extensions)})
-
+                raise ValidationError(_("Неподдерживаемый формат документа: %(formats)s") % {'formats': ', '.join(valid_extensions)})
             mime_type = getattr(document, 'content_type', '').lower()
             valid_mime_types = [
                 'application/pdf',
@@ -110,10 +98,8 @@ class DealForm(forms.ModelForm):
             ]
             if mime_type and mime_type not in valid_mime_types:
                 raise ValidationError(_("Неверный тип файла документа"))
-
-            if document.size > 5 * 1024 * 1024:  # 5MB
+            if document.size > 5 * 1024 * 1024:
                 raise ValidationError(_("Максимальный размер документа - 5MB"))
-
             if document.name.split('.')[-1].lower() in ['exe', 'bat', 'cmd', 'sh']:
                 raise ValidationError(_("Загрузка исполняемых файлов запрещена"))
         return document
@@ -124,23 +110,13 @@ class DealForm(forms.ModelForm):
             ext = os.path.splitext(image.name)[1].lower()
             valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
             if ext not in valid_extensions:
-                raise ValidationError(_(
-                    "Неподдерживаемый формат изображения. "
-                    "Допустимые форматы: %(formats)s"
-                ) % {'formats': ', '.join(valid_extensions)})
-
+                raise ValidationError(_("Неподдерживаемый формат изображения: %(formats)s") % {'formats': ', '.join(valid_extensions)})
             mime_type = getattr(image, 'content_type', '').lower()
-            valid_mime_types = [
-                'image/jpeg',
-                'image/png',
-                'image/gif'
-            ]
+            valid_mime_types = ['image/jpeg', 'image/png', 'image/gif']
             if mime_type and mime_type not in valid_mime_types:
                 raise ValidationError(_("Неверный тип файла изображения"))
-
-            if image.size > 2 * 1024 * 1024:  # 2MB
+            if image.size > 2 * 1024 * 1024:
                 raise ValidationError(_("Максимальный размер изображения - 2MB"))
-
             try:
                 img = Image.open(image)
                 img.verify()
@@ -156,29 +132,16 @@ class DealForm(forms.ModelForm):
             deal.save()
         return deal
 
+# ➤ Клиент формасы
 class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = ['name', 'email', 'phone', 'address']
         widgets = {
-            'name': forms.TextInput(attrs={
-                'class': 'form-control',
-                'maxlength': '200'
-            }),
-            'email': forms.EmailInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'example@mail.com'
-            }),
-            'phone': forms.TextInput(attrs={
-                'class': 'form-control',
-                'pattern': r'\+?[0-9\s\-\(\)]+',
-                'title': _('Формат: +7 (XXX) XXX-XX-XX')
-            }),
-            'address': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 2,
-                'maxlength': '500'
-            }),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'maxlength': '200'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'example@mail.com'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'\+?[0-9\s\-\(\)]+', 'title': _('Формат: +7 (XXX) XXX-XX-XX')}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'maxlength': '500'}),
         }
 
     def clean_phone(self):
