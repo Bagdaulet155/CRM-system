@@ -1,13 +1,34 @@
 {% extends 'base.html' %}
 
+{% block title %}Создание сделки | CRM{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Создание сделки</h2>
-    <form method="post" enctype="multipart/form-data" class="p-4 border rounded bg-light shadow-sm">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary mt-3">Создать сделку</button>
-        <a href="{% url 'deal_list' %}" class="btn btn-secondary mt-3">Назад к списку</a>
-    </form>
+    <div class="card shadow-lg rounded-4 p-4">
+        <h2 class="mb-4 text-center">📄 Создание новой сделки</h2>
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="mb-3">
+                    <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ field.errors|striptags }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'deal_list' %}" class="btn btn-outline-secondary">← Назад</a>
+                <button type="submit" class="btn btn-success px-4">Создать сделку</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

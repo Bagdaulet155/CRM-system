@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2 class="text-primary">👤 Личный кабинет</h2>
+        <hr class="w-25 mx-auto">
+    </div>
+
+    <div class="card shadow-sm mb-5 rounded-4">
+        <div class="card-body">
+            <h4 class="card-title">Информация о пользователе</h4>
+            <p class="card-text"><strong>Имя пользователя:</strong> {{ user.username }}</p>
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card border-primary shadow-sm h-100 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">👥 Мои клиенты</h5>
+                    {% if clients %}
+                        <ul class="list-group list-group-flush">
+                            {% for client in clients %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ client.name }}</strong><br>
+                                        <small class="text-muted">{{ client.email }}</small>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mt-3">Нет клиентов.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card border-success shadow-sm h-100 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title text-success">💼 Мои сделки</h5>
+                    {% if deals %}
+                        <ul class="list-group list-group-flush">
+                            {% for deal in deals %}
+                                <li class="list-group-item">
+                                    <strong>{{ deal.title }}</strong> — {{ deal.amount }}₸
+                                    <br><small class="badge bg-secondary">{{ deal.get_status_display }}</small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted mt-3">Нет сделок.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Избранные сделки{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center text-warning mb-4">⭐ Избранные сделки</h2>
+    <hr class="w-25 mx-auto mb-5">
+
+    {% if deals %}
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered shadow-sm rounded">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Название</th>
+                        <th>Описание</th>
+                        <th>Сумма</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for deal in deals %}
+                    <tr>
+                        <td><strong>{{ deal.title }}</strong></td>
+                        <td>{{ deal.description }}</td>
+                        <td>{{ deal.amount }}₸</td>
+                        <td>{{ deal.created_at|date:"d.m.Y H:i" }}</td>
+                        <td>
+                            <span class="badge badge-info">{{ deal.get_status_display }}</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'toggle_favorite' deal.id %}" class="btn btn-outline-danger btn-sm">
+                                ✖ Удалить
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            У вас пока нет избранных сделок.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

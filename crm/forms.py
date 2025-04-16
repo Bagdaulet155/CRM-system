@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from .models import Deal, Client
 from PIL import Image
 import os
+from .models import ClientReview
 
 # CustomUser моделін алу
 User = get_user_model()
@@ -161,3 +162,13 @@ class ClientForm(forms.ModelForm):
         if not cleaned_data.get('phone') and not cleaned_data.get('email'):
             raise ValidationError(_("Необходимо указать телефон или email"))
         return cleaned_data
+
+
+class ClientReviewForm(forms.ModelForm):
+    class Meta:
+        model = ClientReview
+        fields = ['rating', 'comment']
+        widgets = {
+            'rating': forms.Select(attrs={'class': 'form-control'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }

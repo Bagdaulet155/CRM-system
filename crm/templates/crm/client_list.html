@@ -1,22 +1,33 @@
 {% extends 'base.html' %}
 
+{% block title %}Клиенты | CRM{% endblock %}
+
 {% block content %}
-  <h2>Список клиентов</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">👥 Список клиентов</h2>
 
-
-  {% if clients %}
-    <ul>
-      {% for client in clients %}
-        <li>
-          <strong>{{ client.name }}</strong><br>
-          Email: {{ client.email }}<br>
-          Телефон: {{ client.phone }}<br>
-          <a href="{% url 'edit_client' client.id %}">✏️ Редактировать</a> |
-          <a href="{% url 'delete_client' client.id %}">🗑 Удалить</a>
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>Нет клиентов в системе.</p>
-  {% endif %}
+    {% if clients %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for client in clients %}
+                <div class="col">
+                    <div class="card h-100 shadow-lg border-0 rounded-4">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-primary">{{ client.name }}</h5>
+                            <p class="card-text mb-2"><i class="bi bi-envelope"></i> {{ client.email }}</p>
+                            <p class="card-text mb-2"><i class="bi bi-telephone"></i> {{ client.phone }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 d-flex justify-content-between px-3 pb-3">
+                            <a href="{% url 'edit_client' client.id %}" class="btn btn-sm btn-outline-info rounded-pill">✏️ Редактировать</a>
+                            <a href="{% url 'delete_client' client.id %}" class="btn btn-sm btn-outline-danger rounded-pill">🗑 Удалить</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center mt-5">
+            Клиенты не найдены. Добавьте первого клиента 🚀
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

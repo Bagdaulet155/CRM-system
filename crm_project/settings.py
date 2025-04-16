@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -180,3 +181,9 @@ CSRF_COOKIE_SECURE = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 LOGIN_URL = '/login/'
+
+
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',  # Bootstrap-пен үйлесімділік үшін
+}
