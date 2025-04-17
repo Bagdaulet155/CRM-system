@@ -6,7 +6,11 @@ from django.contrib.auth import get_user_model
 from .models import Deal, Client
 from PIL import Image
 import os
+from .models import CustomUser
 from .models import ClientReview
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV2Checkbox
+
 
 # CustomUser моделін алу
 User = get_user_model()
@@ -18,7 +22,7 @@ class SomeForm(forms.Form):
     field3 = forms.DateField()
 
 # ➤ Регистрация формасы
-class SignUpForm(UserCreationForm):
+class CustomSignupForm(UserCreationForm):
     email = forms.EmailField(
         label=_('Email'),
         widget=forms.EmailInput(attrs={
@@ -30,21 +34,25 @@ class SignUpForm(UserCreationForm):
 
     user_type = forms.ChoiceField(
         label=_('Тип пользователя'),
-        choices=User.USER_TYPE_CHOICES,
+        choices=CustomUser.USER_TYPE_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=True
     )
 
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
+
     class Meta:
-        model = User
-        fields = ('username', 'email', 'user_type', 'password1', 'password2')
+        model = CustomUser
+        fields = ('username', 'email', 'user_type', 'password1', 'password2', 'captcha')
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control'}),
         }
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
+        if CustomUser.objects.filter(email=email).exists():
             raise ValidationError(_("Этот email уже зарегистрирован"))
         return email
 

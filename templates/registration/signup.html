@@ -57,6 +57,11 @@
                     {{ form.password2 }}
                 </div>
 
+                <!-- ✅ CAPTCHA -->
+                <div class="form-group mb-3">
+                    {{ form.captcha }}
+                </div>
+
                 <button type="submit" class="btn btn-success w-100 rounded-pill">Зарегистрироваться</button>
             </form>
 
@@ -68,3 +73,6 @@
     </div>
 </div>
 {% endblock %}
+
+<!-- ✅ CAPTCHA скрипті міндетті -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>

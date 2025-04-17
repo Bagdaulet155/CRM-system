@@ -14,6 +14,7 @@ SECRET_KEY = 'django-insecure-%e$y8dhfbu%9unyb_@axshq1-^l$0@!^k@da#3_f+2@ypybsog
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
@@ -26,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crm',
-    'captcha',  # 👈 reCAPTCHA жұмыс істеуі үшін міндетті түрде керек
+    'django_recaptcha', # 👈 reCAPTCHA жұмыс істеуі үшін міндетті түрде керек    
 ]
 
 
@@ -108,13 +109,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Authentication URLs
 LOGIN_REDIRECT_URL = '/clients/'
 LOGOUT_REDIRECT_URL = '/login/'
+LOGOUT_REDIRECT_URL = 'login'
 
 # reCAPTCHA settings
 RECAPTCHA_SITE_KEY = '6LeDGA8rAAAAACIcccJm1StsNHvO0yc0jcv4MtAG'
 RECAPTCHA_SECRET_KEY = '6LeDGA8rAAAAAAD2HVNqgH3TcLMf9i4-1vwqY2Lx'
 
-RECAPTCHA_PUBLIC_KEY = 'your-public-key'
-RECAPTCHA_PRIVATE_KEY = 'your-private-key'
+RECAPTCHA_PUBLIC_KEY = '6LclQBsrAAAAABCXBLd6ilkBpU7VFAGzYfSg99hs'
+RECAPTCHA_PRIVATE_KEY = '6LclQBsrAAAAAK-d9VBUD_J-hgSydQ96aXtPpoak'
+
 
 
 # User model configuration
