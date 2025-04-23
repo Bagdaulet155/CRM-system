@@ -30,6 +30,34 @@
             color: #ffc107 !important;
         }
 
+        .navbar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .btn-outline-light {
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            background-color: transparent;
+        }
+
+        .btn-outline-light:hover {
+            background-color: #ffffff;
+            color: #343a40;
+        }
+
+        .btn-outline-danger {
+            border: 1px solid #dc3545;
+            color: #dc3545;
+            background-color: transparent;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
         footer {
             background-color: #343a40;
             color: white;
@@ -46,15 +74,61 @@
         .alert-dismissible .btn-close {
             color: white;
         }
+
+        /* Стили для кнопок профиля и почты */
+        .profile-btn, .mail-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 2px solid #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .mail-btn {
+            background-color: #007bff; /* Синий цвет */
+            color: white;
+        }
+
+        .profile-btn {
+            background-color: #6c757d;
+        }
+
+        .mail-btn:hover {
+            background-color: #0056b3; /* Более темный синий */
+            color: white;
+        }
+
+        .profile-btn:hover {
+            background-color: #ffffff;
+            color: #343a40;
+        }
+
+        .logout-btn {
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background-color: transparent;
+            color: #dc3545;
+            border: 2px solid #dc3545;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Навбар -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">CRM</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand" href="{% url 'home' %}" style="font-weight: bold;">CRM</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -65,15 +139,26 @@
                 </ul>
                 <ul class="navbar-nav d-flex align-items-center">
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">👤 {{ user.username }}</a>
+                        <!-- Почтовая иконка -->
+                        <li class="nav-item mail-btn">
+                            <a href="{% url 'message_list' %}" class="nav-link">
+                                <i class="bi bi-envelope"></i>
+                            </a>
                         </li>
+                        <!-- Иконка профиля -->
+                        <li class="nav-item profile-btn">
+                            <a href="{% url 'profile' %}" class="nav-link">
+                                <i class="bi bi-person-circle"></i>
+                            </a>
+                        </li>
+                        <!-- Кнопка выхода -->
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-link nav-link" style="padding: 0; color: white;">Выйти</button>
+                                <button type="submit" class="btn logout-btn">
+                                    <i class="bi bi-box-arrow-right"></i> Выйти
+                                </button>
                             </form>
-                            
                         </li>
                     {% else %}
                         <li class="nav-item">
@@ -87,7 +172,7 @@
             </div>
         </div>
     </nav>
-
+    
     <!-- Контент -->
     <div class="container">
         {% if messages %}
@@ -110,6 +195,7 @@
     </footer>
 
     <!-- Bootstrap JS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

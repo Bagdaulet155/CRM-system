@@ -9,9 +9,11 @@ from django.contrib import messages
 from django.conf import settings
 from datetime import datetime
 import requests
-
+from .models import Message
+from .forms import MessageForm
+from django.http import HttpResponseRedirect
 from .models import Client, Deal, ClientReview
-from .forms import CustomSignupForm, DealForm, SomeForm, ClientReviewForm
+from .forms import CustomSignupForm, DealForm, SomeForm, ClientReviewForm,ClientForm
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -31,6 +33,24 @@ def some_view(request):
 @login_required
 def sensitive_action(request):
     pass
+
+def delete_client(request, id):
+    client = get_object_or_404(Client, id=id)
+    client.delete()
+    messages.success(request, "Клиент сәтті өшірілді!")
+    return redirect('client_list') 
+
+def edit_client(request, id):
+    client = get_object_or_404(Client, id=id)
+    if request.method == 'POST':
+        form = ClientForm(request.POST, instance=client)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('/client_list')  # Перенаправление на страницу с клиентами
+    else:
+        form = ClientForm(instance=client)
+    return render(request, 'crm/edit_client.html', {'form': form})
+
 
 # ➕ Signup view
 def signup(request):
@@ -113,8 +133,21 @@ def deal_list(request):
         'filters': request.GET
     })
 
+@login_required
 def home(request):
-    return render(request, 'home.html')
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.receiver = request.user  # Можно добавить логику, чтобы указывать конкретного получателя
+            message.save()
+            messages.success(request, "Сообщение отправлено!")
+            return redirect('home')  # Перенаправление на главную страницу
+    else:
+        form = MessageForm()
+    
+    return render(request, 'home.html', {'form': form})
 
 @login_required
 def create_deal(request):
@@ -143,13 +176,24 @@ def handler500(request):
 @login_required
 def profile_view(request):
     user = request.user
-    clients = Client.objects.filter(created_by=user)
-    deals = Deal.objects.filter(created_by=user)
+    clients = Client.objects.filter(created_by=user)  # Получаем всех клиентов текущего пользователя
+    deals = Deal.objects.filter(created_by=user)  # Получаем все сделки текущего пользователя
     return render(request, 'crm/profile.html', {
         'user': user,
         'clients': clients,
         'deals': deals,
     })
+
+@login_required
+def add_client(request):
+    if request.method == "POST":
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('client_list')  # Перенаправляем на список клиентов
+    else:
+        form = ClientForm()
+    return render(request, 'crm/add_client.html', {'form': form})
 
 @login_required
 def toggle_favorite(request, deal_id):
@@ -165,10 +209,12 @@ def favorite_deals(request):
     deals = request.user.favorite_deals.all()
     return render(request, 'crm/favorite_deals.html', {'deals': deals})
 
+
 @login_required
 def add_review(request, client_id):
     client = get_object_or_404(Client, id=client_id)
-
+    
+    # Проверка, не оставлял ли пользователь уже отзыв
     if ClientReview.objects.filter(client=client, user=request.user).exists():
         messages.warning(request, "Вы уже оставляли отзыв этому клиенту.")
         return redirect('client_list')
@@ -181,8 +227,74 @@ def add_review(request, client_id):
             review.user = request.user
             review.save()
             messages.success(request, "Спасибо за ваш отзыв!")
-            return redirect('client_list')
+            return redirect('client_detail', client_id=client.id)
     else:
         form = ClientReviewForm()
 
     return render(request, 'crm/add_review.html', {'form': form, 'client': client})
+@login_required
+def message_list(request):
+    # Получаем все сообщения для текущего пользователя
+    user_messages = Message.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-created_at')
+
+    return render(request, 'crm/message_list.html', {'messages': user_messages})
+
+@login_required
+def send_message(request, recipient_id):
+    # Отправка сообщения
+    recipient = get_object_or_404(User, id=recipient_id)
+
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.receiver = recipient
+            message.save()
+            return redirect('message_list')  # Перенаправляем на страницу с сообщениями
+    else:
+        form = MessageForm()
+
+    return render(request, 'crm/send_message.html', {'form': form, 'recipient': recipient})
+
+@login_required
+def edit_client(request, id):
+    client = get_object_or_404(Client, id=id)
+    if request.method == 'POST':
+        form = ClientForm(request.POST, instance=client)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Клиент успешно обновлен!")
+            return redirect('client_list')  # Перенаправление на страницу списка клиентов
+        else:
+            messages.error(request, "Ошибка при обновлении данных клиента.")
+    else:
+        form = ClientForm(instance=client)
+    return render(request, 'crm/edit_client.html', {'form': form})
+
+
+@login_required
+def create_message(request):
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user  # Устанавливаем отправителя как текущего пользователя
+            message.receiver = User.objects.first()  # Здесь можно выбрать получателя
+            message.save()
+            return redirect('message_list')
+    else:
+        form = MessageForm()
+
+    return render(request, 'crm/create_message.html', {'form': form})
+@login_required
+def client_detail(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    reviews = ClientReview.objects.filter(client=client).order_by('-created_at')  # Получаем все отзывы этого клиента
+    review_form = ClientReviewForm()
+
+    return render(request, 'crm/client_detail.html', {
+        'client': client,
+        'reviews': reviews,
+        'review_form': review_form
+    })

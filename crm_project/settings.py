@@ -27,7 +27,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crm',
-    'django_recaptcha', # 👈 reCAPTCHA жұмыс істеуі үшін міндетті түрде керек    
+    'django_recaptcha', 
+    "widget_tweaks",
+   
 ]
 
 

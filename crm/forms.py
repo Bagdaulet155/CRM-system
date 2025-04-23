@@ -3,23 +3,16 @@ from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
-from .models import Deal, Client
+from .models import Deal, Client, Message
 from PIL import Image
 import os
-from .models import CustomUser
 from .models import ClientReview
 from django_recaptcha.fields import ReCaptchaField
 from django_recaptcha.widgets import ReCaptchaV2Checkbox
-
+from .models import CustomUser
 
 # CustomUser моделін алу
 User = get_user_model()
-
-# ➤ Жалпы форма мысалы
-class SomeForm(forms.Form):
-    field1 = forms.CharField(max_length=100)
-    field2 = forms.IntegerField()
-    field3 = forms.DateField()
 
 # ➤ Регистрация формасы
 class CustomSignupForm(UserCreationForm):
@@ -34,7 +27,7 @@ class CustomSignupForm(UserCreationForm):
 
     user_type = forms.ChoiceField(
         label=_('Тип пользователя'),
-        choices=CustomUser.USER_TYPE_CHOICES,
+        choices=[('admin', 'Administrator'), ('manager', 'Manager')],
         widget=forms.Select(attrs={'class': 'form-control'}),
         required=True
     )
@@ -55,6 +48,24 @@ class CustomSignupForm(UserCreationForm):
         if CustomUser.objects.filter(email=email).exists():
             raise ValidationError(_("Этот email уже зарегистрирован"))
         return email
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        label="Электронный адрес или номер телефона",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите email или номер телефона'
+        })
+    )
+    password = forms.CharField(
+        label="Пароль",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите пароль'
+        })
+    )
+
 
 # ➤ Сделка формасы
 class DealForm(forms.ModelForm):
@@ -140,6 +151,10 @@ class DealForm(forms.ModelForm):
         if commit:
             deal.save()
         return deal
+class SomeForm(forms.Form):
+    field1 = forms.CharField(max_length=100)
+    field2 = forms.IntegerField()
+    field3 = forms.DateField()
 
 # ➤ Клиент формасы
 class ClientForm(forms.ModelForm):
@@ -179,4 +194,20 @@ class ClientReviewForm(forms.ModelForm):
         widgets = {
             'rating': forms.Select(attrs={'class': 'form-control'}),
             'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        }
+
+# ➤ Сообщение форма
+class MessageForm(forms.ModelForm):
+    class Meta:
+        model = Message
+        fields = ['receiver', 'content']  # Добавляем поле для получателя
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Напишите ваше сообщение...',
+                'rows': 4,
+            }),
+            'receiver': forms.Select(attrs={
+                'class': 'form-control',
+            }),
         }

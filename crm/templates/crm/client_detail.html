@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ client.name }} - Профиль{% endblock %}
+
+{% block content %}
+  <h2>{{ client.name }}</h2>
+  <p>Email: {{ client.email }}</p>
+  <p>Телефон: {{ client.phone }}</p>
+  <p>Дата создания: {{ client.created_at }}</p>
+
+  <h3>Отзывы о клиенте</h3>
+
+  {% if reviews %}
+    <ul>
+      {% for review in reviews %}
+        <li>
+          <strong>{{ review.user.username }}</strong> ({{ review.created_at }})
+          <p>{{ review.comment }}</p>
+          <p>Рейтинг: {{ review.rating }}★</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Отзывов пока нет.</p>
+  {% endif %}
+
+  <h4>Оставить отзыв</h4>
+  <form method="POST">
+    {% csrf_token %}
+    {{ review_form.as_p }}
+    <button type="submit" class="btn btn-primary">Оставить отзыв</button>
+  </form>
+{% endblock %}

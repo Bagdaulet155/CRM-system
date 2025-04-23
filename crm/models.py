@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 # Custom User моделі
 class CustomUser(AbstractUser):
@@ -56,14 +57,19 @@ class LogEntry(models.Model):
 
 
 
-
 class Client(models.Model):
     name = models.CharField(max_length=200, verbose_name=_('Client Name'))
     email = models.EmailField(unique=True, verbose_name=_('Email Address'))
     phone = models.CharField(max_length=20, verbose_name=_('Phone Number'))
     address = models.TextField(max_length=500, blank=True, null=True, verbose_name=_('Address'))
-    created_at = models.DateTimeField(null=True, blank=True, verbose_name=_('Created At'))
-    created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, related_name='created_clients', verbose_name=_('Created By'))
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('Created At'))  # Автоматическое заполнение текущей даты и времени
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,  # Используем кастомную модель пользователя
+        on_delete=models.SET_NULL, 
+        null=True, 
+        related_name='created_clients', 
+        verbose_name=_('Created By')
+    )
 
     class Meta:
         verbose_name = _('Client')
@@ -74,6 +80,7 @@ class Client(models.Model):
         return self.name
 
     def average_rating(self):
+        """Возвращает среднюю оценку для клиента, если есть отзывы"""
         reviews = self.reviews.all()
         if reviews.exists():
             return round(sum([r.rating for r in reviews]) / reviews.count(), 1)
@@ -149,7 +156,7 @@ class Task(models.Model):
 
 class ClientReview(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # User моделін алып келеді
     rating = models.IntegerField(
         choices=[(i, str(i)) for i in range(1, 6)],
         verbose_name=_("Оценка (1–5)")
@@ -160,8 +167,56 @@ class ClientReview(models.Model):
     class Meta:
         verbose_name = _('Отзыв')
         verbose_name_plural = _('Отзывы')
-        unique_together = ('client', 'user')  # 1 қолданушы 1 клиентке 1 рет пікір жаза алады
+        constraints = [
+            models.UniqueConstraint(fields=['client', 'user'], name='unique_review_per_client_user')
+        ]
 
     def __str__(self):
         return f"{self.client.name} - {self.rating}★"
 
+class Message(models.Model):
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sent_messages",
+        verbose_name="Отправитель"
+    )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_messages",
+        verbose_name="Получатель"
+    )
+    content = models.TextField(verbose_name="Сообщение")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата отправки")
+    
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"Сообщение от {self.sender} для {self.receiver} от {self.created_at}"
+
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="sent_messages",
+        verbose_name="Отправитель"
+    )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_messages",
+        verbose_name="Получатель"
+    )
+    content = models.TextField(verbose_name="Сообщение")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата отправки")
+    
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
+        ordering = ['-created_at']
+        
+    def __str__(self):
+        return f"Сообщение от {self.sender} для {self.receiver} от {self.created_at}"

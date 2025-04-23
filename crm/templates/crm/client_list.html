@@ -6,6 +6,11 @@
 <div class="container mt-5">
     <h2 class="mb-4 text-center">👥 Список клиентов</h2>
 
+    <!-- Кнопка для добавления нового клиента -->
+    <div class="mb-3">
+        <a href="{% url 'add_client' %}" class="btn btn-success">Добавить клиента</a>
+    </div>
+
     {% if clients %}
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for client in clients %}
@@ -15,13 +20,36 @@
                             <h5 class="card-title fw-bold text-primary">{{ client.name }}</h5>
                             <p class="card-text mb-2"><i class="bi bi-envelope"></i> {{ client.email }}</p>
                             <p class="card-text mb-2"><i class="bi bi-telephone"></i> {{ client.phone }}</p>
+                            <!-- Добавляем отображение даты создания клиента -->
+                            <p class="card-text mb-2"><i class="bi bi-calendar"></i> Дата создания: {{ client.created_at|date:"d M Y" }}</p>
                         </div>
                         <div class="card-footer bg-transparent border-0 d-flex justify-content-between px-3 pb-3">
                             <a href="{% url 'edit_client' client.id %}" class="btn btn-sm btn-outline-info rounded-pill">✏️ Редактировать</a>
-                            <a href="{% url 'delete_client' client.id %}" class="btn btn-sm btn-outline-danger rounded-pill">🗑 Удалить</a>
+                            <!-- Кнопка для удаления с подтверждением -->
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteModal{{ client.id }}">🗑 Удалить</button>
                         </div>
                     </div>
                 </div>
+
+                <!-- Модальное окно подтверждения удаления -->
+                <div class="modal fade" id="deleteModal{{ client.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ client.id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel{{ client.id }}">Подтверждение удаления</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            </div>
+                            <div class="modal-body">
+                                Вы уверены, что хотите удалить клиента {{ client.name }}?
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <a href="{% url 'delete_client' client.id %}" class="btn btn-danger">Удалить</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             {% endfor %}
         </div>
     {% else %}

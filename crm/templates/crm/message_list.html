@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Мои сообщения</h2>
+
+    {% if messages %}
+        <div class="list-group">
+            {% for message in messages %}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <h5 class="mb-1">{{ message.sender.username }} → {{ message.receiver.username }}</h5>
+                    <p class="mb-1">{{ message.content }}</p>
+                    <small>{{ message.created_at }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>У вас нет сообщений.</p>
+    {% endif %}
+
+    <!-- Кнопка для создания нового сообщения -->
+    <a href="{% url 'create_message' %}" class="btn btn-primary mt-3">Написать сообщение</a>
+{% endblock %}
