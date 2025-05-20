@@ -9,15 +9,19 @@ from django.contrib import messages
 from django.conf import settings
 from datetime import datetime
 import requests
-from .models import Message
-from .forms import MessageForm
-from django.http import HttpResponseRedirect
-from .models import Client, Deal, ClientReview
-from .forms import CustomSignupForm, DealForm, SomeForm, ClientReviewForm,ClientForm
+from .models import Message, Client, Deal, ClientReview
+from .forms import MessageForm, CustomSignupForm, DealForm, SomeForm, ClientReviewForm, ClientForm
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect
+from django.http import HttpResponse
+
+
+
 User = get_user_model()
 
-# ➕ SomeForm мысалы
+
+
+# Пример формы SomeForm
 def some_view(request):
     if request.method == 'POST':
         form = SomeForm(request.POST)
@@ -37,7 +41,7 @@ def sensitive_action(request):
 def delete_client(request, id):
     client = get_object_or_404(Client, id=id)
     client.delete()
-    messages.success(request, "Клиент сәтті өшірілді!")
+    messages.success(request, "Клиент сәтті өшірілді!")  # Қазақша текст
     return redirect('client_list') 
 
 def edit_client(request, id):
@@ -51,8 +55,7 @@ def edit_client(request, id):
         form = ClientForm(instance=client)
     return render(request, 'crm/edit_client.html', {'form': form})
 
-
-# ➕ Signup view
+# Signup view
 def signup(request):
     if request.method == 'POST':
         form = CustomSignupForm(request.POST)
@@ -65,15 +68,15 @@ def signup(request):
             r = requests.post('https://www.google.com/recaptcha/api/siteverify', data=data)
             result = r.json()
             if not result.get('success'):
-                form.add_error(None, 'reCAPTCHA тексерісі сәтсіз.')
+                form.add_error(None, 'reCAPTCHA тексерісі сәтсіз.')  # Қазақша текст
 
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "✅ Тіркелдің!")
+            messages.success(request, "✅ Тіркелдің!")  # Қазақша текст
             return redirect('home')
         else:
-            messages.error(request, "❌ Қате бар, қайта тексер.")
+            messages.error(request, "❌ Қате бар, қайта тексер.")  # Қазақша текст
     else:
         form = CustomSignupForm()
     return render(request, 'registration/signup.html', {'form': form})
@@ -209,7 +212,6 @@ def favorite_deals(request):
     deals = request.user.favorite_deals.all()
     return render(request, 'crm/favorite_deals.html', {'deals': deals})
 
-
 @login_required
 def add_review(request, client_id):
     client = get_object_or_404(Client, id=client_id)
@@ -232,6 +234,7 @@ def add_review(request, client_id):
         form = ClientReviewForm()
 
     return render(request, 'crm/add_review.html', {'form': form, 'client': client})
+
 @login_required
 def message_list(request):
     # Получаем все сообщения для текущего пользователя
@@ -287,6 +290,7 @@ def create_message(request):
         form = MessageForm()
 
     return render(request, 'crm/create_message.html', {'form': form})
+
 @login_required
 def client_detail(request, client_id):
     client = get_object_or_404(Client, id=client_id)
@@ -298,3 +302,6 @@ def client_detail(request, client_id):
         'reviews': reviews,
         'review_form': review_form
     })
+
+def recaptcha_view(request):
+    return HttpResponse("reCAPTCHA page")

@@ -18,6 +18,7 @@ urlpatterns = [
     
     # Аутентификация
     path('signup/', views.signup, name='signup'),
+    path('recaptcha/', views.recaptcha_view, name='recaptcha'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('accounts/login/', views.CustomLoginView.as_view(), name='login'),  # қосымша
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),

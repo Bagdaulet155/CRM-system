@@ -3,30 +3,28 @@
 {% block title %}Клиенты | CRM{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4 text-center">👥 Список клиентов</h2>
+<div class="container-fluid px-5 py-4">
+    <h2 class="mb-5 text-center fw-bold">👥 Список клиентов</h2>
 
     <!-- Кнопка для добавления нового клиента -->
-    <div class="mb-3">
-        <a href="{% url 'add_client' %}" class="btn btn-success">Добавить клиента</a>
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{% url 'add_client' %}" class="btn btn-success px-4 py-2 fs-5 rounded-4 shadow">➕ Добавить клиента</a>
     </div>
 
     {% if clients %}
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
             {% for client in clients %}
                 <div class="col">
                     <div class="card h-100 shadow-lg border-0 rounded-4">
                         <div class="card-body">
                             <h5 class="card-title fw-bold text-primary">{{ client.name }}</h5>
-                            <p class="card-text mb-2"><i class="bi bi-envelope"></i> {{ client.email }}</p>
-                            <p class="card-text mb-2"><i class="bi bi-telephone"></i> {{ client.phone }}</p>
-                            <!-- Добавляем отображение даты создания клиента -->
-                            <p class="card-text mb-2"><i class="bi bi-calendar"></i> Дата создания: {{ client.created_at|date:"d M Y" }}</p>
+                            <p class="card-text mb-2"><i class="bi bi-envelope me-2"></i>{{ client.email }}</p>
+                            <p class="card-text mb-2"><i class="bi bi-telephone me-2"></i>{{ client.phone }}</p>
+                            <p class="card-text mb-2"><i class="bi bi-calendar me-2"></i>Дата создания: {{ client.created_at|date:"d M Y" }}</p>
                         </div>
                         <div class="card-footer bg-transparent border-0 d-flex justify-content-between px-3 pb-3">
-                            <a href="{% url 'edit_client' client.id %}" class="btn btn-sm btn-outline-info rounded-pill">✏️ Редактировать</a>
-                            <!-- Кнопка для удаления с подтверждением -->
-                            <button class="btn btn-sm btn-outline-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#deleteModal{{ client.id }}">🗑 Удалить</button>
+                            <a href="{% url 'edit_client' client.id %}" class="btn btn-outline-info rounded-pill px-3">✏️ Редактировать</a>
+                            <button class="btn btn-outline-danger rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#deleteModal{{ client.id }}">🗑 Удалить</button>
                         </div>
                     </div>
                 </div>
@@ -40,7 +38,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                             </div>
                             <div class="modal-body">
-                                Вы уверены, что хотите удалить клиента {{ client.name }}?
+                                Вы уверены, что хотите удалить клиента <strong>{{ client.name }}</strong>?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
@@ -49,7 +47,6 @@
                         </div>
                     </div>
                 </div>
-
             {% endfor %}
         </div>
     {% else %}

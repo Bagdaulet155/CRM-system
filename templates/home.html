@@ -3,16 +3,134 @@
 {% block title %}Главная | CRM-система{% endblock %}
 
 {% block content %}
-<div class="container py-5 text-center">
-    <h1 class="display-4 fw-bold mb-4 text-dark">Добро пожаловать в CRM-систему</h1>
-    <p class="lead mb-5 text-muted">Эффективно управляйте клиентами и сделками с нашим современным интерфейсом.</p>
+<style>
+    .hero-container {
+        width: 100%;
+        padding: 50px 40px 30px;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        text-align: center;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        margin-bottom: 40px;
+    }
 
-    <div class="d-flex justify-content-center gap-3 flex-wrap">
-        <a href="{% url 'client_list' %}" class="btn btn-outline-primary btn-lg shadow">Список клиентов</a>
-        <a href="{% url 'deal_list' %}" class="btn btn-outline-success btn-lg shadow">Список сделок</a>
-        <a href="{% url 'create_deal' %}" class="btn btn-outline-warning btn-lg shadow">Создать сделку</a>
-        <!-- Добавление кнопки для перехода в сообщения -->
-        <a href="{% url 'message_list' %}" class="btn btn-outline-info btn-lg shadow">Мои сообщения</a>
+    .hero-container h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .hero-container p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .cards-wrapper {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 30px;
+        width: 100%;
+    }
+
+    .card-item {
+        flex: 1 1 calc(25% - 30px);
+        min-width: 220px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px 20px;
+        text-align: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .card-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-item i {
+        font-size: 32px;
+        color: #4e54c8;
+        margin-bottom: 15px;
+    }
+
+    .card-item h5 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .card-item p {
+        font-size: 14px;
+        color: #555;
+        min-height: 48px;
+    }
+
+    .card-item a {
+        margin-top: 15px;
+        display: inline-block;
+        padding: 10px 22px;
+        border-radius: 25px;
+        border: 2px solid #4e54c8;
+        color: #4e54c8;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .card-item a:hover {
+        background-color: #4e54c8;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .cards-wrapper {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-item {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="container-fluid px-5">
+    <div class="hero-container">
+        <h1>Добро пожаловать в CRM</h1>
+        <p>Оптимизируйте продажи, управляйте клиентами и достигайте новых высот с нашей системой</p>
+    </div>
+
+    <div class="cards-wrapper">
+        <div class="card-item">
+            <i class="bi bi-people"></i>
+            <h5>Клиенты</h5>
+            <p>Просматривайте, редактируйте и управляйте всей клиентской базой.</p>
+            <a href="{% url 'client_list' %}">Перейти</a>
+        </div>
+
+        <div class="card-item">
+            <i class="bi bi-kanban"></i>
+            <h5>Сделки</h5>
+            <p>Управляйте сделками и отслеживайте статус каждого этапа.</p>
+            <a href="{% url 'deal_list' %}">Открыть</a>
+        </div>
+
+        <div class="card-item">
+            <i class="bi bi-plus-circle"></i>
+            <h5>Новая сделка</h5>
+            <p>Добавьте новую сделку быстро и просто в несколько кликов.</p>
+            <a href="{% url 'create_deal' %}">Создать</a>
+        </div>
+
+        <div class="card-item">
+            <i class="bi bi-envelope"></i>
+            <h5>Сообщения</h5>
+            <p>Связь с клиентами без переключения между вкладками.</p>
+            <a href="{% url 'message_list' %}">Открыть</a>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,201 +1,232 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}CRM-система{% endblock %}</title>
 
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
 
     <style>
-        body {
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             font-family: 'Roboto', sans-serif;
-            background-color: #f8f9fa;
+            background: linear-gradient(120deg, #e0eafc, #cfdef3);
+            color: #333;
+        }
+
+        .wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 80px;
+            background: #1b1f3a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            color: #aaa;
+            font-size: 24px;
+            margin: 20px 0;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #ffffff;
+        }
+
+        .sidebar .logo {
+            font-size: 26px;
+            color: #ffffff;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-image: url('/static/images/bg-kanban.jpg'); /* қойылған суреттің жолы */
+            background-size: cover;
+            background-position: center;
         }
 
         .navbar {
-            background-color: #343a40;
+            background: rgba(78, 84, 200, 0.8);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .navbar-brand,
         .nav-link {
             color: #ffffff !important;
+            transition: color 0.3s ease;
         }
 
         .nav-link:hover {
-            color: #ffc107 !important;
+            color: #ffee58 !important;
+            text-decoration: underline;
         }
 
         .navbar-nav .nav-item {
-            display: flex;
-            align-items: center;
             margin-left: 10px;
         }
 
-        .btn-outline-light {
-            border: 1px solid #ffffff;
-            color: #ffffff;
-            background-color: transparent;
+        .profile-btn, .mail-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: white;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            padding: 0;
         }
 
-        .btn-outline-light:hover {
-            background-color: #ffffff;
-            color: #343a40;
+        .profile-btn i, .mail-btn i {
+            color: #4e54c8;
         }
 
-        .btn-outline-danger {
-            border: 1px solid #dc3545;
-            color: #dc3545;
-            background-color: transparent;
+        .profile-btn:hover, .mail-btn:hover {
+            background: #4e54c8;
         }
 
-        .btn-outline-danger:hover {
-            background-color: #dc3545;
+        .profile-btn:hover i, .mail-btn:hover i {
             color: white;
         }
 
-        footer {
-            background-color: #343a40;
+        .logout-btn {
+            font-size: 16px;
+            padding: 8px 20px;
+            background: linear-gradient(to right, #ff6a00, #ee0979);
             color: white;
-            padding: 15px 0;
-            text-align: center;
-            margin-top: 40px;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: 0.3s;
         }
 
-        .container {
-            padding-top: 30px;
-            padding-bottom: 30px;
+        .logout-btn:hover {
+            opacity: 0.85;
+            transform: scale(1.05);
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            padding: 30px;
         }
 
         .alert-dismissible .btn-close {
             color: white;
         }
 
-        /* Стили для кнопок профиля и почты */
-        .profile-btn, .mail-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            border: 2px solid #ffffff;
-            transition: all 0.3s ease;
-        }
-
-        .mail-btn {
-            background-color: #007bff; /* Синий цвет */
-            color: white;
-        }
-
-        .profile-btn {
-            background-color: #6c757d;
-        }
-
-        .mail-btn:hover {
-            background-color: #0056b3; /* Более темный синий */
-            color: white;
-        }
-
-        .profile-btn:hover {
-            background-color: #ffffff;
-            color: #343a40;
-        }
-
-        .logout-btn {
-            font-size: 18px;
-            padding: 10px 20px;
-            border-radius: 30px;
-            background-color: transparent;
-            color: #dc3545;
-            border: 2px solid #dc3545;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background-color: #dc3545;
-            color: white;
+        footer {
+            background: #1a1a2e;
+            color: #ddd;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}" style="font-weight: bold;">CRM</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Главная</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'client_list' %}">Клиенты</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'deal_list' %}">Сделки</a></li>
-                </ul>
-                <ul class="navbar-nav d-flex align-items-center">
-                    {% if user.is_authenticated %}
-                        <!-- Почтовая иконка -->
-                        <li class="nav-item mail-btn">
-                            <a href="{% url 'message_list' %}" class="nav-link">
-                                <i class="bi bi-envelope"></i>
-                            </a>
-                        </li>
-                        <!-- Иконка профиля -->
-                        <li class="nav-item profile-btn">
-                            <a href="{% url 'profile' %}" class="nav-link">
-                                <i class="bi bi-person-circle"></i>
-                            </a>
-                        </li>
-                        <!-- Кнопка выхода -->
-                        <li class="nav-item">
-                            <form method="post" action="{% url 'logout' %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn logout-btn">
-                                    <i class="bi bi-box-arrow-right"></i> Выйти
-                                </button>
-                            </form>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'signup' %}">Регистрация</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Вход</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-    
-    <!-- Контент -->
-    <div class="container">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
-                </div>
-            {% endfor %}
-        {% endif %}
+    <div class="wrapper">
 
-        {% block content %}{% endblock %}
+        <!-- 👈 Sidebar -->
+        <div class="sidebar">
+            <div class="logo">CRM</div>
+            <a href="{% url 'home' %}" title="Басты бет"><i class="bi bi-house-door"></i></a>
+            <a href="{% url 'deal_list' %}" title="Сделки"><i class="bi bi-kanban"></i></a>
+            <a href="{% url 'client_list' %}" title="Клиенты"><i class="bi bi-people"></i></a>
+            <a href="{% url 'message_list' %}" title="Сообщения"><i class="bi bi-envelope"></i></a>
+            <a href="{% url 'profile' %}" title="Профиль"><i class="bi bi-person-circle"></i></a>
+        </div>
+
+        <!-- 📦 Content Area -->
+        <div class="content-area">
+
+            <!-- 🔝 Navbar -->
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand fw-bold" href="{% url 'home' %}">CRM</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto"></ul>
+                        <ul class="navbar-nav d-flex align-items-center">
+                            {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                    <a href="{% url 'message_list' %}" class="nav-link mail-btn">
+                                        <i class="bi bi-envelope"></i>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'profile' %}" class="nav-link profile-btn">
+                                        <i class="bi bi-person-circle"></i>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <form method="post" action="{% url 'logout' %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn logout-btn">
+                                            <i class="bi bi-box-arrow-right"></i> Выйти
+                                        </button>
+                                    </form>
+                                </li>
+                            {% else %}
+                                <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Регистрация</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Вход</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 🧩 Контент -->
+            <div class="main-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </div>
+
+            <!-- 🔚 Footer -->
+            <footer>
+                <div class="text-center">
+                    &copy; {{ now.year }} CRM-система. Все права защищены.
+                </div>
+            </footer>
+
+        </div>
     </div>
 
-    <!-- Футер -->
-    <footer>
-        <div class="container">
-            &copy; {{ now.year }} CRM-система. Все права защищены.
-        </div>
-    </footer>
-
-    <!-- Bootstrap JS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

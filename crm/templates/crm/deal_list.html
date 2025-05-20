@@ -3,65 +3,68 @@
 {% block title %}Список сделок | CRM{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4 text-center">📊 Список сделок</h2>
+<div class="container-fluid px-5 py-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold display-5">📊 Список сделок</h2>
+        <p class="text-muted">Управляйте сделками, фильтруйте, сортируйте и контролируйте статус каждой.</p>
+    </div>
 
     <!-- 🔍 Фильтрация -->
-    <div class="card p-4 shadow-sm mb-5 rounded-4">
-        <form method="GET" class="row g-3">
-            <div class="col-md-3">
-                <label for="client">Клиент</label>
-                <select name="client" class="form-control" id="client">
+    <div class="card shadow-lg border-0 rounded-4 p-4 mb-5">
+        <form method="GET" class="row g-4">
+            <div class="col-lg-3">
+                <label for="client" class="form-label">Клиент</label>
+                <select name="client" class="form-select" id="client">
                     <option value="">Все</option>
                     {% for client in clients %}
                         <option value="{{ client.id }}" {% if request.GET.client == client.id|stringformat:"s" %}selected{% endif %}>{{ client.name }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-3">
-                <label for="min_amount">Мин. сумма</label>
+            <div class="col-lg-3">
+                <label for="min_amount" class="form-label">Мин. сумма</label>
                 <input type="number" name="min_amount" class="form-control" value="{{ request.GET.min_amount }}">
             </div>
-            <div class="col-md-3">
-                <label for="max_amount">Макс. сумма</label>
+            <div class="col-lg-3">
+                <label for="max_amount" class="form-label">Макс. сумма</label>
                 <input type="number" name="max_amount" class="form-control" value="{{ request.GET.max_amount }}">
             </div>
-            <div class="col-md-3">
-                <label for="status">Статус</label>
-                <select name="status" class="form-control">
+            <div class="col-lg-3">
+                <label for="status" class="form-label">Статус</label>
+                <select name="status" class="form-select">
                     <option value="">Все</option>
                     <option value="new" {% if request.GET.status == "new" %}selected{% endif %}>Новая</option>
                     <option value="in_progress" {% if request.GET.status == "in_progress" %}selected{% endif %}>В процессе</option>
                     <option value="completed" {% if request.GET.status == "completed" %}selected{% endif %}>Завершена</option>
                 </select>
             </div>
-            <div class="col-md-3">
-                <label for="start_date">Дата с</label>
+            <div class="col-lg-3">
+                <label for="start_date" class="form-label">Дата с</label>
                 <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
             </div>
-            <div class="col-md-3">
-                <label for="end_date">Дата по</label>
+            <div class="col-lg-3">
+                <label for="end_date" class="form-label">Дата по</label>
                 <input type="date" name="end_date" class="form-control" value="{{ request.GET.end_date }}">
             </div>
-            <div class="col-md-3">
-                <label for="sort_by">Сортировка</label>
-                <select name="sort_by" class="form-control">
+            <div class="col-lg-3">
+                <label for="sort_by" class="form-label">Сортировка</label>
+                <select name="sort_by" class="form-select">
                     <option value="date_asc" {% if request.GET.sort_by == "date_asc" %}selected{% endif %}>Дата ↑</option>
                     <option value="date_desc" {% if request.GET.sort_by == "date_desc" %}selected{% endif %}>Дата ↓</option>
                     <option value="amount_asc" {% if request.GET.sort_by == "amount_asc" %}selected{% endif %}>Сумма ↑</option>
                     <option value="amount_desc" {% if request.GET.sort_by == "amount_desc" %}selected{% endif %}>Сумма ↓</option>
                 </select>
             </div>
-            <div class="col-md-3 align-self-end">
-                <button type="submit" class="btn btn-primary w-100">Применить</button>
+            <div class="col-lg-3 align-self-end">
+                <button type="submit" class="btn btn-gradient w-100">Применить</button>
             </div>
         </form>
     </div>
 
     <!-- 📄 Таблица сделок -->
     {% if deals %}
-    <div class="table-responsive rounded-4 shadow-sm">
-        <table class="table table-hover align-middle bg-white rounded-4 overflow-hidden">
+    <div class="table-responsive shadow-sm rounded-4">
+        <table class="table table-hover align-middle bg-white rounded overflow-hidden">
             <thead class="table-light">
                 <tr>
                     <th>Название</th>
@@ -76,11 +79,11 @@
             <tbody>
                 {% for deal in deals %}
                 <tr>
-                    <td class="fw-bold">{{ deal.title }}</td>
+                    <td class="fw-semibold">{{ deal.title }}</td>
                     <td>{{ deal.description|truncatechars:60 }}</td>
                     <td>
                         {% if deal.document %}
-                            <a href="{{ deal.document.url }}" class="btn btn-sm btn-outline-info">Скачать</a>
+                            <a href="{{ deal.document.url }}" class="btn btn-sm btn-outline-primary">Скачать</a>
                         {% else %}
                             <span class="text-muted">Нет</span>
                         {% endif %}
@@ -92,9 +95,7 @@
                             <span class="text-muted">Нет</span>
                         {% endif %}
                     </td>
-                    <td>
-                        <span class="badge bg-secondary">{{ deal.get_status_display }}</span>
-                    </td>
+                    <td><span class="badge bg-secondary">{{ deal.get_status_display }}</span></td>
                     <td>{{ deal.created_at|date:"d.m.Y H:i" }}</td>
                     <td>
                         {% if user in deal.favorites.all %}
@@ -113,7 +114,7 @@
     {% endif %}
 
     <div class="text-end mt-4">
-        <a class="btn btn-success" href="{% url 'create_deal' %}">➕ Создать сделку</a>
+        <a class="btn btn-success btn-lg" href="{% url 'create_deal' %}">➕ Создать сделку</a>
     </div>
 </div>
 {% endblock %}

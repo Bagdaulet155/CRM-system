@@ -29,8 +29,7 @@ INSTALLED_APPS = [
     'crm',
     'django_recaptcha', 
     "widget_tweaks",
-    'captcha',
-
+    'captcha'
 ]
 
 
@@ -116,11 +115,13 @@ LOGOUT_REDIRECT_URL = 'login'
 
 # reCAPTCHA settings
 # reCAPTCHA settings
+
+
 RECAPTCHA_PUBLIC_KEY = '6Ld7PCIrAAAAAPaQCTH2qK3GZYDl6RwdxGXd2q5Y'
 RECAPTCHA_PRIVATE_KEY = '6Ld7PCIrAAAAAMZhK4GdCkUWaX30sGEkVZi3sRAr'
 
-
-
+RECAPTCHA_SITE_KEY = '6LeDGA8rAAAAACIcccJm1StsNHvO0yc0jcv4MtAG'
+RECAPTCHA_SECRET_KEY = '6LeDGA8rAAAAAAD2HVNqgH3TcLMf9i4-1vwqY2Lx'
 
 
 

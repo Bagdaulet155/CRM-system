@@ -23,3 +23,49 @@ button:hover {
     max-width: 800px;
     margin-top: 50px;
 }
+
+.sidebar {
+    width: 200px;
+    background: #1b1f3a;
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.sidebar .logo {
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.sidebar a {
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.sidebar a i {
+    font-size: 20px;
+}
+
+.sidebar a:hover {
+    background-color: #34406b;
+    color: #fff;
+}
+
+.sidebar a.active {
+    background-color: #007bff;
+    color: white;
+}
+
